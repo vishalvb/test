@@ -22,6 +22,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
@@ -31,7 +33,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
 
-public class AppConfig implements WebApplicationInitializer{
+public class AppConfig extends WebMvcConfigurerAdapter implements WebApplicationInitializer{
 
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "db.driver";
     private static final String PROPERTY_NAME_DATABASE_PASSWORD = "db.password";
@@ -51,7 +53,7 @@ public class AppConfig implements WebApplicationInitializer{
 		dataSource.setDriverClassName(env.getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
 		dataSource.setUrl(env.getRequiredProperty(PROPERTY_NAME_DATABASE_URL));
 		dataSource.setUsername(env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-		dataSource.setPassword(env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
+		//dataSource.setPassword(env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
 
 		return dataSource;
 	}
@@ -88,6 +90,12 @@ PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN));
         resolver.setViewClass(JstlView.class);
 		return resolver;
 	}
+	
+	@Override
+	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+	    registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+	}
+
 
 	@Override
 	public void onStartup(ServletContext servletContext)
@@ -104,5 +112,6 @@ PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN));
         dispatcher.addMapping("/");
 		
 	}
+	
 
 }
